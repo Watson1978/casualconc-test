@@ -99,8 +99,8 @@ class AppDelegate
     
     if Defaults['corpusMode'] == 0
       @modeSwitch.setLabel("Text",forSegment:1)
-      @modeSwitch.setLabel("",forSegment:2)
-      @modeSwitch.setEnabled(false,forSegment:2)
+      #@modeSwitch.setLabel("",forSegment:2)
+      #@modeSwitch.setEnabled(false,forSegment:2)
     end
 
 
