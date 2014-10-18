@@ -41,13 +41,13 @@ class Preferences < NSWindowController
   def changeCorpusMode(sender)
     if Defaults['corpusMode'] == 0
       NSApp.delegate.modeSwitch.setLabel("Text",forSegment:1)
-      NSApp.delegate.modeSwitch.setLabel("",forSegment:2)
-      NSApp.delegate.modeSwitch.setEnabled(false,forSegment:2)
-      NSApp.delegate.modeSwitch.setSelectedSegment(0) if NSApp.delegate.modeSwitch.selectedSegment == 2
+      #NSApp.delegate.modeSwitch.setLabel("",forSegment:2)
+      #NSApp.delegate.modeSwitch.setEnabled(false,forSegment:2)
+      #NSApp.delegate.modeSwitch.setSelectedSegment(0) if NSApp.delegate.modeSwitch.selectedSegment == 2
     else
       NSApp.delegate.modeSwitch.setLabel("Database",forSegment:1)
-      NSApp.delegate.modeSwitch.setLabel("Indexed Database",forSegment:2)
-      NSApp.delegate.modeSwitch.setEnabled(true,forSegment:2)
+      #NSApp.delegate.modeSwitch.setLabel("Indexed Database",forSegment:2)
+      #NSApp.delegate.modeSwitch.setEnabled(true,forSegment:2)
     end
   end
   
