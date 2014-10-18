@@ -5,7 +5,7 @@ $LOAD_PATH << "[RESOUCES PATH]/Gems/sqlite3-1.3.9/lib"
 require 'sqlite3'
 require "find"
 
-files = Array.new
+files = []
 File.open([FileListPath],'r') do |f|
   files = f.read.split("\n")
 end
@@ -145,7 +145,7 @@ files.each do |file|
         else
           leftText = leftText[leftText.length-60,leftText.length]
         end
-        leftWords = Array.new
+        leftWords = []
         leftText.downcase.scan(reg) do |word|
           leftWords << [$&,[$`.length,$&.length]]
         end
@@ -155,7 +155,7 @@ files.each do |file|
             leftWords << ["",[0,0]]
           end
         end
-        rightWords = Array.new
+        rightWords = []
         rightText.downcase.scan(reg) do |word|
           rightWords << [$&,[$`.length+60+key.length,$&.length]]
         end

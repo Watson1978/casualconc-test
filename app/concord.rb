@@ -105,9 +105,9 @@ class Concord
     @appInfoObjCtl.content['concKWPositions'] = Hash.new{|hash,key| hash[key] = []}
     #@appInfoObjCtl.content.removeObjectForKey('concFileCount') if @appInfoObjCtl.content['concFileCount']
     #@appInfoObjCtl.content.removeObjectForKey('currentPlotChoice') if @appInfoObjCtl.content['currentPlotChoice']
-    @appInfoObjCtl.content['concKWs'] = Hash.new
+    @appInfoObjCtl.content['concKWs'] = {}
     @appInfoObjCtl.content['concSearchedDBs'] = Hash.new{|hash,key| hash[key] = []}
-    @appInfoObjCtl.content['concInfoSecLength'] = Hash.new
+    @appInfoObjCtl.content['concInfoSecLength'] = {}
     
     
     NSApp.delegate.progressBar.setIndeterminate(true)
@@ -187,9 +187,9 @@ class Concord
 
   def concProcess(searchWord,contextWord,excludeWord,contextReg,leftSpan,rightSpan,source)
 
-    concResults = Array.new
-    foundFileCount = Hash.new(0)
-    @notFoundFiles = Array.new
+    concResults = []
+    foundFileCount = {}
+    @notFoundFiles = []
     @keyOrder = 0
     
     if (Defaults['qouteIncludeCheck'] || Defaults['hyphenIncludeCheck'] || (Defaults['othersIncludeCheck'] && Defaults['partOfWordChars'] != "")) && NSApp.delegate.includeAsPartWordChars != nil
@@ -248,7 +248,7 @@ class Concord
       end
     elsif Defaults['mode'] == 0 && Defaults['corpusMode'] == 1
       NSApp.delegate.currentConcMode = 2
-      filesToProcess = Array.new
+      filesToProcess = []
       if source == 20
         @appInfoObjCtl.content['concCorpusSelection'] = @appInfoObjCtl.content['collocCorpusSelection']
       elsif source != 0
@@ -344,7 +344,7 @@ class Concord
       #NSApp.delegate.progressBar.setIndeterminate(true)
       #NSApp.delegate.progressBar.startAnimation(nil)
       
-      filesToProcess = Array.new
+      filesToProcess = []
       totalFilesToProcess = 0
       
       if source == 20
@@ -394,7 +394,7 @@ class Concord
                 while results.next
                   entryItem = results.resultDictionary
                   textResult = db.executeQuery("select text, id from conc_data where file_id == ? order by id",entryItem['file_id'])
-                  textAry = Array.new
+                  textAry = []
                   while textResult.next
                     textAry << textResult.resultDictionary['text']
                   end
@@ -434,8 +434,8 @@ class Concord
       
       case @appInfoObjCtl.content['concSortChoice']
       when false
-        sortOrderLabels = Array.new
-        sortOrder = Array.new
+        sortOrderLabels = []
+        sortOrder = []
         @appInfoObjCtl.content['concSortSelect'].split("-").each do |label|
           if SortOrderLabels[label] >= 11 || SortOrderLabels[label] <= 15
             adjust = @appInfoObjCtl.content['concSearchMode']
@@ -451,7 +451,7 @@ class Concord
         end
         @appInfoObjCtl.content['concSortOrder'] = sortOrder
       when true
-        sortOrder = Array.new
+        sortOrder = []
         @concSortChoiceLabels.each do |label|
           if @appInfoObjCtl.content[label] >= 11 || @appInfoObjCtl.content[label] <= 15
             adjust = @appInfoObjCtl.content['concSearchMode']
@@ -513,7 +513,7 @@ class Concord
           while results.next
             entryItem = results.resultDictionary
             next if !entryItem[keyItem].match(searchWord)
-            concResultHash = Hash.new
+            concResultHash = {}
             concResultHash['filename'] = entryItem['file_name']
             concResultHash['corpus'] = item['name']
             concResultHash['path'] = entryItem['path']
@@ -553,7 +553,7 @@ class Concord
   
   
   def fileConcProcess(item,inText,searchWord,contextWord,excludeWord,contextReg,leftSpan,rightSpan,lpartWordReg,rpartWordReg,pwrFlag,contextIncludeSpan,contextExcludeSpan)
-    concResults = Array.new
+    concResults = []
     if NSApp.delegate.currentConcMode == 3 || Defaults['scopeOfContextChoice'] == 1
       if Defaults['concPlotCheck']
         if Defaults['concPlotChoice'] == 1
@@ -617,7 +617,7 @@ class Concord
   
   def concCoreProcess(item,keyW,leftText,rightText,searchWord,contextWord,excludeWord,contextReg,leftSpan,rightSpan,lpartWordReg,rpartWordReg,pwrFlag,contextIncludeSpan,contextExcludeSpan,leftLength,leftWordLength)
     @appInfoObjCtl.content['concKWs'][keyW.downcase] = 1
-    concResultHash = Hash.new
+    concResultHash = {}
     concResultHash['filename'] = item['filename']
     concResultHash['corpus'] = item['corpus'].to_s
     concResultHash['path'] = item['path']
@@ -668,14 +668,14 @@ class Concord
       rightExtract = rightText[0,rightSpan].gsub(CRCharReg," ")        
       #rightExtract = rightText[/.{0,#{rightSpan}}/].gsub(CRCharReg," ")        
     end
-    leftWords = Array.new
+    leftWords = []
     leftExtract.downcase.scan(contextReg) do |var|
       leftWords << [$&,[$`.length,$&.length]]
     end
         
     leftWords = [["",[0,0]]] * (10 - leftWords.last(10).length) + leftWords.last(10)
 
-    rightWords = Array.new
+    rightWords = []
     leftContextLength = leftExtract.length + keyLength
     rightExtract.downcase.scan(contextReg) do |var|
       rightWords << [$&,[leftContextLength + $`.length,$&.length]]
@@ -683,7 +683,7 @@ class Concord
     rightWords = rightWords.first(10) + [["",[0,0]]] * (10 - rightWords.first(10).length)
 
     if Defaults['concContextWordCheck'] && !contextWord.nil? ######## change this part later ########
-      contextInclude = Array.new
+      contextInclude = []
       if (begPos = (leftWords + rightWords)[contextIncludeSpan][0][1][0]) < leftContextLength && (endPos = (leftWords + rightWords)[contextIncludeSpan][-1][1][0]) > leftContextLength
         return nil if leftExtract[begPos,leftExtract.length - begPos].match(contextWord).nil? && rightExtract[0,endPos + (leftWords + rightWords)[contextIncludeSpan][-1][1][1]].match(contextWord).nil?
         leftExtract[begPos,leftExtract.length - begPos].scan(contextWord) do
@@ -745,7 +745,7 @@ class Concord
     if Defaults['mode'] == 2
       case @appInfoObjCtl.content['concSortChoice']
       when false
-        sortOrder = Array.new
+        sortOrder = []
         @appInfoObjCtl.content['concSortSelect'].split("-").each do |label|
           if SortOrderLabels[label] >= 11 && SortOrderLabels[label] <= 15
             adjust = @appInfoObjCtl.content['concSearchMode']
@@ -759,7 +759,7 @@ class Concord
         end
         @appInfoObjCtl.content['concSortOrder'] = sortOrder
       when true
-        sortOrder = Array.new
+        sortOrder = []
         @concSortChoiceLabels.each do |label|
           if @appInfoObjCtl.content[label] >= 11 && @appInfoObjCtl.content[label] <= 15
             adjust = @appInfoObjCtl.content['concSearchMode']
@@ -774,7 +774,7 @@ class Concord
     else
       case @appInfoObjCtl.content['concSortChoice']
       when false
-        sortOrder = Array.new
+        sortOrder = []
         @appInfoObjCtl.content['concSortSelect'].split("-").each do |label|
           sortOrder << SortOrderLabels[label]
         end
@@ -1048,7 +1048,7 @@ class Concord
         db.close
       when 0
       	db.open
-          textAry = Array.new
+          textAry = []
           results = db.executeQuery("select text, id from conc_data where file_id == ? order by id",item['fileID'])
           while results.next
             textAry << [results.resultDictionary['text'],results.resultDictionary['id']]
@@ -1062,7 +1062,7 @@ class Concord
         db.close
       when 2
       	db.open
-          textAry = Array.new
+          textAry = []
           results = db.executeQuery("select text, id from conc_data where file_id == ? order by id",item['fileID'])
           while results.next
             textAry << [results.resultDictionary['text'],results.resultDictionary['id']]

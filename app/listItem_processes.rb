@@ -74,7 +74,7 @@ class ListItemProcesses
       newInfiles = Hash.new{|x,y| x[y] = {}}
       lemmaList = Hash.new{|x,y| x[y] = []}
       items.each do |item,count|
-        ary = Array.new
+        ary = []
         #item.split(" ").each do |word|
         item.each do |word|
           ary << NSApp.delegate.lemmaInclude[word]
@@ -117,7 +117,7 @@ class ListItemProcesses
       newInCorpus = Hash.new{|x,y| x[y] = {}}
       lemmaList = Hash.new{|x,y| x[y] = []}
       items.each do |item,count|
-        ary = Array.new
+        ary = []
         item.each do |word|
           ary << NSApp.delegate.lemmaInclude[word]
         end
@@ -164,7 +164,7 @@ class ListItemProcesses
       NSApp.delegate.relaceChars = nil 
       return self
     end
-    replaceCharHash = Hash.new
+    replaceCharHash = {}
     replaceCharToProcessText = ""
     Defaults['replaceCharsAry'].each do |item|
       case item['check']

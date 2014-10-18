@@ -24,7 +24,7 @@ class ConcResultController < NSWindowController
     @concTable.undoManager.removeAllActions
     case @appInfoObjCtl.content['concSortChoice']
     when false
-      sortOrder = Array.new
+      sortOrder = []
       @appInfoObjCtl.content['concSortSelect'].split("-").each do |label|
         sortOrder << SortOrderLabels[label]
       end
@@ -119,7 +119,7 @@ class ConcResultController < NSWindowController
     panel.beginSheetModalForWindow(self.window,completionHandler:Proc.new { |returnCode| 
       panel.close
       if returnCode == 1
-        outText = Array.new
+        outText = []
         outText << "Concordance Output: #{NSDate.date.description.sub(/ [+-]\d+$/,"")}"
         searchWordInfo = ""
         searchWordInfo += "Search Word: #{@concSearchWord}" if !@concSearchWord.nil?
@@ -361,7 +361,7 @@ class ConcResultController < NSWindowController
         db.close
       when 0
       	db.open
-          textAry = Array.new
+          textAry = []
           results = db.executeQuery("select text, id from conc_data where file_id == ? order by id",item['fileID'])
           while results.next
             textAry << [results.resultDictionary['text'],results.resultDictionary['id']]
@@ -375,7 +375,7 @@ class ConcResultController < NSWindowController
         db.close
       when 2
       	db.open
-          textAry = Array.new
+          textAry = []
           results = db.executeQuery("select text, id from conc_data where file_id == ? order by id",item['fileID'])
           while results.next
             textAry << [results.resultDictionary['text'],results.resultDictionary['id']]

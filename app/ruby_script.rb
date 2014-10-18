@@ -32,7 +32,7 @@ class MyString < String
         end
         if (Defaults['lemmaCheck'] && NSApp.delegate.lemmas != nil) && (Defaults['spVarCheck'] && NSApp.delegate.spellVars != nil)
           keyword.gsub!(/#{wwd.wordBase}/){|x| 
-          allItems = Array.new
+          allItems = []
           NSApp.delegate.spellVars[NSApp.delegate.lemmaInclude[x.downcase]].split("|").each do |word|
             NSApp.delegate.lemmas[word.downcase].split("|").each do |lms|
               allItems << NSApp.delegate.spellVars[NSApp.delegate.spellVarInclude[lms.downcase]]
@@ -182,9 +182,9 @@ class MyString < String
       keyword = self
       if keyword.match(/\w/)
         begin
-          searchWords = Array.new(0)
-          searchWords2 = Array.new(0)
-          searchWords3 = Array.new(0)
+          searchWords = []
+          searchWords2 = []
+          searchWords3 = []
 
           keyword.gsub!(/\?\:/,"")
 

@@ -34,7 +34,7 @@ class FileInfo
   outlet :groupLabelTable
     
   def awakeFromNib
-    @notFoundFiles = Array.new
+    @notFoundFiles = []
     @groupingTable.unbind("sortDescriptors")
     @groupLabelTable.unbind("sortDescriptors")
   end
@@ -221,7 +221,7 @@ class FileInfo
           @importWLAryCtl.setSortDescriptors(nil)
       
           wlText = NSMutableString.alloc.initWithContentsOfFile(panel.filename,encoding:FileEncoding[@appInfoObjCtl.content['encoding']],error:nil)
-          wordAry = Array.new
+          wordAry = []
           separator = @appInfoObjCtl.content['wcImportType'] == 0 ? "\t" : ","
           wlText.lines.each_with_index do |line|
             items = line.strip.split(separator)
@@ -284,7 +284,7 @@ class FileInfo
           @importKGAryCtl.setSortDescriptors(nil)
       
           kgText = NSMutableString.alloc.initWithContentsOfFile(panel.filename,encoding:FileEncoding[@appInfoObjCtl.content['encoding']],error:nil)
-          wordAry = Array.new
+          wordAry = []
           kgText.lines.each_with_index do |line|
             next if line.strip == ""
             kg = line.strip.split("->")
@@ -367,11 +367,11 @@ class FileInfo
     @fileInfoHash = Hash.new{|hash,key| hash[key] = Hash.new(0)}
     @foundFileHash = Hash.new{|hash,key| hash[key] = Hash.new(0)}
     
-    @pathHash = Hash.new
+    @pathHash = {}
     @pathCount = Hash.new(0)
     @maxlgth = 0
     @totalWLength = 0
-    @notFoundFiles = Array.new
+    @notFoundFiles = []
     if !Defaults['fileInfoCaseSensitivity']
       caseSensitivity = Regexp::IGNORECASE
 	  else
@@ -406,12 +406,12 @@ class FileInfo
           regCase = 0
         end
         if item['words'].to_s != ""
-          wordListHash[item['keyword']] = Array.new
+          wordListHash[item['keyword']] = []
           item['words'].split(/\ *\#\#EXCEPT\#\#\ */).each_with_index do |subEnt,subEntIdx|
              wordListHash[item['keyword']] << Regexp.new('\b(?:'+subEnt.split(divider).uniq.sort_by{|x| -x.length}.join('|')+')\b',regCase)
           end
         else
-          wordListHash[item['keyword']] = Array.new
+          wordListHash[item['keyword']] = []
           wordListHash[item['keyword']] << Regexp.new('\b(?:'+item['keyword']+')\b',regCase)
         end
       end
@@ -447,7 +447,7 @@ class FileInfo
         NSApp.delegate.progressBar.startAnimation(nil)
       end
     elsif Defaults['mode'] == 0 && Defaults['corpusMode'] == 1
-      filesToProcess = Array.new
+      filesToProcess = []
       currentCDs = @fileController.corpusListAry.arrangedObjects.select{|x| x['check']}.map{|x| x['name']}.join(",")
       NSApp.delegate.currentFileInfoCDs = currentCDs#.join(", ")
       @fileController.corpusListAry.arrangedObjects.select{|x| x['check']}.each do |corpusItem|
@@ -455,13 +455,13 @@ class FileInfo
       end
       
       if @appInfoObjCtl.content['fileInfoGroping'] == 2
-        gpHash = Hash.new
+        gpHash = {}
         @groupingAryCtl.arrangedObjects.each do |item|
           if item['gpSelection'] == 1
             gpHash[item['cdbname']] = item['labels'] == "" ? item['cdbname'] : item['labels']
           else
             fnAry = NSArray.arrayWithContentsOfFile(item['path']).map{|x| x['filename']}
-            gpHash[item['cdbname']] = Hash.new
+            gpHash[item['cdbname']] = {}
             if item['labelAry'].length > 0
               item['labelAry'].each_with_index do |var,idx|
                 if var != ""
@@ -539,10 +539,10 @@ class FileInfo
       return [] if inText.length == 0
       self.selectFileInfoProcess(fiMode,inText,wordReg,nil,wordListHash)
     else
-      filesToProcess = Array.new
+      filesToProcess = []
       totalFilesToProcess = 0
       @fileController.dbListAry.arrangedObjects.select{|x| x['check']}.each do |corpusItem|
-        fileIDs = Array.new
+        fileIDs = []
         autorelease_pool {        
           db = FMDatabase.databaseWithPath(corpusItem['path'])
           db.open
@@ -563,12 +563,12 @@ class FileInfo
       
       
       if @appInfoObjCtl.content['fileInfoGroping'] == 2     
-        gpHash = Hash.new
+        gpHash = {}
         @groupingAryCtl.arrangedObjects.each do |item|
           if item['gpSelection'] == 1
             gpHash[item['cdbname']] = item['labels'] == "" ? item['cdbname'] : item['labels']
           else
-            fnAry = Array.new
+            fnAry = []
             
             autorelease_pool {        
               db = FMDatabase.databaseWithPath(corpusItem['path'])
@@ -577,7 +577,7 @@ class FileInfo
                 while results.next
                   fnAry << results.resultDictionary['path']
                 end
-                gpHash[item['cdbname']] = Hash.new
+                gpHash[item['cdbname']] = {}
                 if item['labelAry'].length > 0
                   item['labelAry'].each_with_index do |var,idx|
                     if var != ""
@@ -607,7 +607,7 @@ class FileInfo
           autorelease_pool {
             db = FMDatabase.databaseWithPath(ccdb[0])
             db.open
-              textAry = Array.new
+              textAry = []
               results = db.executeQuery("SELECT text,path FROM conc_data WHERE #{sqlSearchWords}")
               while results.next
                 path = results.resultDictionary['path'].mutableCopy
@@ -665,7 +665,7 @@ class FileInfo
             db = FMDatabase.databaseWithPath(ccdb[0])
             db.open            
               ccdb[1].each do |item|
-                textAry = Array.new
+                textAry = []
                 results = db.executeQuery("select text from conc_data where file_id == ? order by id",item[0])
                 while results.next
                   textAry << results.resultDictionary['text'].mutableCopy
@@ -727,14 +727,14 @@ class FileInfo
   
   
   def fileInfoTableProcess
-    dataAry = Array.new
+    dataAry = []
     if Defaults['fileInfoTTRStd']
       titles = [['Types','types',"#,##0"],['Tokens','tokens',"#,##0"],['TTR','ttr',"#,##0.00"],['STDTTR','stdttr',"#,##0.00"],['Ave W Lgth','aveLgth',"#,##0.00"]]
     else
       titles = [['Types','types',"#,##0"],['Tokens','tokens',"#,##0"],['TTR','ttr',"#,##0.00"],['Ave W Lgth','aveLgth',"#,##0.00"]]
     end
 
-    fileHash = Hash.new
+    fileHash = {}
     fileHash['ccFIGroup'] = " TOTAL"
     fileHash['tokens'] = @fileInfoHash['ccFileInfoTotal']['tokens']
     fileHash['types'] = @fileInfoHash['ccFileInfoTotal']['types']
@@ -757,7 +757,7 @@ class FileInfo
 
     @fileInfoHash.each do |file,item|
       next if file == 'ccFileInfoTotal'
-      fileHash = Hash.new
+      fileHash = {}
       fileHash['ccFIGroup'] = File.basename(@pathHash[file])
       fileHash['tokens'] = item['tokens']
       fileHash['types'] = item['types']
@@ -827,7 +827,7 @@ class FileInfo
   
   
   def wordListTableProcess(type)
-    dataAry = Array.new
+    dataAry = []
     case type
     when 0
       labels = @appInfoObjCtl.content['fileInfoWordsText'].split(",")
@@ -873,8 +873,8 @@ class FileInfo
           totalNum = @fileInfoHash['ccFileInfoTotal'].inject(0){|num,item| num + item[1]}
           fileHash['ccFITotalFreq'] = totalNum
           @fileInfoHash.delete("")
-          wordHash = Hash.new
-          @itemOrder = Array.new
+          wordHash = {}
+          @itemOrder = []
           case Defaults['fileInfoWFStdChoice']
           when 0
             @fileInfoHash['ccFileInfoTotal'].sort_by{|x,y| [-y,x]}.each_with_index do |item,idx|
@@ -892,7 +892,7 @@ class FileInfo
           Dispatch::Queue.main.async{
             @fileInfoAryCtl.addObject(fileHash)
           }
-          dataAry = Array.new
+          dataAry = []
           @fileInfoHash.delete('ccFileInfoTotal')
           @fileInfoHash.each do |file,item|
             fileHash = Hash.new(0)
@@ -936,8 +936,8 @@ class FileInfo
         else
           fileHash = Hash.new(0)
           fileHash['ccFIGroup'] = " TOTAL"
-          wordHash = Hash.new
-          @itemOrder = Array.new
+          wordHash = {}
+          @itemOrder = []
           totalNum = @fileInfoHash['ccFileInfoTotal'].inject(0){|num,item| num + item[1]}
           fileHash['ccFITotalFreq'] = totalNum
           @fileInfoHash.delete("")
@@ -999,7 +999,7 @@ class FileInfo
           Dispatch::Queue.main.async{
             @fileInfoAryCtl.addObject(fileHash)
           }
-          dataAry = Array.new
+          dataAry = []
           @fileInfoHash.delete('ccFileInfoTotal')
           @fileInfoHash.each do |file,item|
             fileHash = Hash.new(0)
@@ -1043,7 +1043,7 @@ class FileInfo
         else
           fileHash = Hash.new(0)
           fileHash['ccFIGroup'] = " TOTAL"
-          #wordHash = Hash.new
+          #wordHash = {}
           wordNum = @fileInfoHash['ccFileInfoTotal'].length
           totalNum = @fileInfoHash['ccFileInfoTotal'].inject(0){|num,item| num + item[1]}
           fileHash['ccFITotalFreq'] = totalNum
@@ -1092,13 +1092,13 @@ class FileInfo
 
 
   def tfidfTableProcess
-    dataAry = Array.new
+    dataAry = []
     totalFiles = @fileInfoHash.length - 1
     totalNum = @fileInfoHash['ccFileInfoTotal'].inject(0){|num,item| num + item[1]}
     wordNum = @fileInfoHash['ccFileInfoTotal'].length
     totalHash = Hash.new(0)
     totalNumHash = Hash.new(0)
-    fileAry = Array.new
+    fileAry = []
     @fileInfoHash.delete('ccFileInfoTotal')
     @fileInfoHash.each do |file,item|
       totalNumHash[file] = item.inject(0){|num,wd| num + wd[1]}
@@ -1107,12 +1107,12 @@ class FileInfo
         totalHash[word] += freq * log(totalFiles/@foundFileHash[word].length.to_f)
       end
     end
-    @itemOrder = Array.new
-    wordHash = Hash.new
+    @itemOrder = []
+    wordHash = {}
 
     case Defaults['fileInfoTFIDFSortChoice']
     when 0
-      fileHash = Hash.new
+      fileHash = {}
       fileHash['ccFIGroup'] = " TOTAL" 
       fileHash['ccFITotalFreq'] = totalNum
 
@@ -1127,7 +1127,7 @@ class FileInfo
       }
       
       @fileInfoHash.each do |file,item|
-        fileHash = Hash.new
+        fileHash = {}
         fileHash['ccFIGroup'] = File.basename(@pathHash[file])
         fileHash['ccFITotalFreq'] = totalNumHash[file]
         item.each do |word,val|
@@ -1149,7 +1149,7 @@ class FileInfo
         end    
       }
     when 1
-      fileHash = Hash.new
+      fileHash = {}
       fileHash['ccFIGroup'] = " TOTAL"
       fileHash['ccFITotalFreq'] = totalNum
       totalHash.sort_by{|x,y| [-y,x]}.each_with_index do |item,idx|
@@ -1160,7 +1160,7 @@ class FileInfo
         @fileInfoAryCtl.addObject(fileHash)
       }
       @fileInfoHash.each do |file,item|
-        fileHash = Hash.new
+        fileHash = {}
         fileHash['ccFIGroup'] = File.basename(@pathHash[file])
         fileHash['ccFITotalFreq'] = totalNumHash[file]
         item.sort_by{|x,y| [-y,x]}.each_with_index do |item,idx|
@@ -1363,7 +1363,7 @@ class FileInfo
   end
   
   def showGroupingPanel(sender)
-    #checkedItems = Array.new
+    #checkedItems = []
     case Defaults['mode']
     when 0
       if @fileController.corpusListAry.arrangedObjects.select{|x| x['check']}.map{|y| y['name']} != @groupingAryCtl.arrangedObjects.map{|y| y['cdbname']}
@@ -1399,7 +1399,7 @@ class FileInfo
     when 1
       db = FMDatabase.databaseWithPath(@groupingAryCtl.selectedObjects[0]['path'])
       db.open
-        fileList = Array.new
+        fileList = []
         results = db.executeQuery("SELECT DISTINCT path FROM conc_data")
         while results.next
           items = results.resultDictionary
@@ -1447,7 +1447,7 @@ class FileInfo
       end
       pasteBoard.setString(copyText.join("\n"),forType:NSStringPboardType)
     when 1
-      copyText = Array.new
+      copyText = []
 
       if @currentFIType == 3
         if Defaults['fileInfoCopyLimitCheck']
@@ -1470,7 +1470,7 @@ class FileInfo
           if Defaults['fileInfoTableCopyTotalsCheck']
             copyText << ["Group","Total"] + @itemOrder
             @fileInfoAryCtl.arrangedObjects.each do |item|
-              eachLine = Array.new
+              eachLine = []
               eachLine << item['ccFIGroup']
               eachLine << item['ccFITotalFreq']
               eachLine.concat((1..@itemOrder.length).to_a.map{|x| item["ccFIItem#{x}"]})
@@ -1480,7 +1480,7 @@ class FileInfo
             copyText << ["Group"] + @itemOrder
             @fileInfoAryCtl.arrangedObjects.each do |item|
               next if item['ccFIGroup'] == ' TOTAL'
-              eachLine = Array.new
+              eachLine = []
               eachLine << item['ccFIGroup']
               eachLine.concat((1..@itemOrder.length).to_a.map{|x| item["ccFIItem#{x}"]})
               copyText << eachLine
@@ -1500,7 +1500,7 @@ class FileInfo
           copyText << ["Group","Token"] + @itemOrder
         end
         @fileInfoAryCtl.arrangedObjects.each do |item|
-          eachLine = Array.new
+          eachLine = []
           eachLine << item['ccFIGroup']
           eachLine << item['ccFITotalFreq']
           eachLine.concat((1..@itemOrder.length).to_a.map{|x| item["ccFIItem#{x}"]})
