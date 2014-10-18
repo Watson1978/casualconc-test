@@ -77,7 +77,7 @@ class WCResultWindowController < NSWindowController
     if returnCode == 1
       @progressBar.startAnimation(nil)
       
-      outText = Array.new
+      outText = []
 
       case @saveOptionChoice.indexOfSelectedItem
       when 0

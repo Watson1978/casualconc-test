@@ -83,7 +83,7 @@ class FileController
     when 0
       @acceptFileTypes = ['txt']
     when 1
-      @acceptFileTypes = Array.new
+      @acceptFileTypes = []
       AcceptFileTypes.each_with_index do |type,idx|
         @acceptFileTypes << AcceptFileExtensions[idx] if Defaults[type]
       end
@@ -102,7 +102,7 @@ class FileController
   
   
   def addFilesToList(fileAry,source)
-    filesToAdd = Array.new
+    filesToAdd = []
     exteions = Regexp.new("\\.(?:#{@acceptFileTypes.join("|")})") if not @acceptFileTypes.nil?
     fileAry.each do |path|
       next if File.basename(path).match(/^\./)
@@ -250,12 +250,12 @@ class FileController
     alert.beginSheetModalForWindow(@mainWindow,completionHandler:Proc.new { |returnCode| 
       if returnCode == 1
         selectedItem = @cdListAry[Defaults['mode']].arrangedObjects[@cdListAry[Defaults['mode']].selectionIndex]
-        @filesSkipped = Array.new
+        @filesSkipped = []
         case Defaults['mode']
         when 0
           currentCorpusFiles = NSMutableArray.arrayWithContentsOfFile(selectedItem['path'])
       
-          filesToAdd = Array.new
+          filesToAdd = []
           @filesToAddAry.arrangedObjects.each do |item|
             if currentCorpusFiles.select{|x| x['path'] == item['path']}.length > 0
               @filesSkipped << item['filename']
@@ -284,7 +284,7 @@ class FileController
           db.open
             db.beginTransaction
               results = db.executeQuery("SELECT DISTINCT path,encoding,file_id FROM conc_data")
-              allFiles = Array.new
+              allFiles = []
               while results.next
                 allFiles << results.resultDictionary['path']
               end
@@ -411,7 +411,7 @@ class FileController
   def mergeCDProcess(newCDName)
     @mainWindow.endSheet(@nameNewCDPanel)
     
-    newCorpusArray = Array.new
+    newCorpusArray = []
     @corpusListAry.selectedObjects.each do |corpus|
       newCorpusArray.addObjectsFromArray(NSArray.arrayWithContentsOfFile(corpus['path']))
     end
@@ -507,7 +507,7 @@ class FileController
             return
           end
       
-          allFiles = Array.new
+          allFiles = []
           filesToProcess = 0
           @dbListAry.selectedObjects.map{|x| x['files']}.each{|x| filesToProcess += x}
 
@@ -537,7 +537,7 @@ file_id integer
           db.open
             db.beginTransaction
               tableCheck = db.executeQuery("SELECT * FROM sqlite_master WHERE type='table'")
-              tables = Array.new
+              tables = []
               while tableCheck.next
                 tables << tableCheck.resultDictionary
               end
@@ -545,8 +545,8 @@ file_id integer
                 db.executeUpdate("DROP TABLE conc_data") 
               end
               db.executeUpdate(sql)
-              dbFileInfo = Array.new
-              pathAry = Array.new
+              dbFileInfo = []
+              pathAry = []
               @dbListAry.selectedObjects.each_with_index do |item,idx|
                 db2 = FMDatabase.databaseWithPath(item['path'])
                 db2.open
@@ -619,7 +619,7 @@ file_id integer
     db.open
       db.beginTransaction
         tableCheck = db.executeQuery("SELECT * FROM sqlite_master WHERE type='table'")
-        tables = Array.new
+        tables = []
         while tableCheck.next
           tables << tableCheck.resultDictionary
         end
@@ -824,7 +824,7 @@ file_id integer
     db = SQLite3::Database.new(filename)
     stopWords = ['the','a','an','is','are','be','was','were','of','in','and','but','for','to','at']
     #NSApp.delegate.stopWords
-    tables = Array.new
+    tables = []
     db.execute("SELECT * FROM sqlite_master WHERE type='table'") do |row|
       tables << row
     end
@@ -867,7 +867,7 @@ file_id integer
               else
                 leftText = leftText[leftText.length-60,leftText.length]
               end
-              leftWords = Array.new
+              leftWords = []
               leftText.downcase.scan(/\b(?:\w+(?:\'\w+)?)\b/) do |word|
                 leftWords << [word[0],[$`.length,$&.length]]
               end
@@ -877,7 +877,7 @@ file_id integer
                   leftWords << ["",[0,0]]
                 end
               end
-              rightWords = Array.new
+              rightWords = []
               rightText.downcase.scan(/\b(?:\w+(?:\'\w+)?)\b/) do |word|
                 rightWords << [word[0],[$`.length+60+key.length,$&.length]]
               end
@@ -1008,7 +1008,7 @@ file_id integer
     return if Defaults['mode'] == 2
     @selectedCDAry[Defaults['mode']].removeObjectsAtArrangedObjectIndexes(NSIndexSet.indexSetWithIndexesInRange([0,@selectedCDAry[Defaults['mode']].arrangedObjects.length]))      
     
-    newSelection = Array.new
+    newSelection = []
     
     @cdListAry[Defaults['mode']].arrangedObjects.each do |item|
       newSelection << {'name' => item['name'],'path' => item['path']} if item['check'] == true
@@ -1074,12 +1074,12 @@ file_id integer
   
   
   def addExistingDBProcess(filesAry)
-    databaseFiles = Array.new
+    databaseFiles = []
     @fileContentProgressCircle.startAnimation(nil)
     Dispatch::Queue.concurrent.async{
       filesAry.each do |dbfile|
         totalTokens = 0
-        totalFiles = Hash.new
+        totalFiles = {}
         db = FMDatabase.databaseWithPath(dbfile)
         db.open
         	db.beginTransaction
@@ -1104,7 +1104,7 @@ file_id integer
   
   
   def addExistingIndexedDBProcess(filesAry)
-    databaseFiles = Array.new
+    databaseFiles = []
     @fileContentProgressCircle.startAnimation(nil)
     filesAry.each do |dbfile|
       totalTokens = 0
@@ -1201,7 +1201,7 @@ file_id integer
           @contentListAry.removeObjectsAtArrangedObjectIndexes(NSIndexSet.indexSetWithIndexesInRange([0,@contentListAry.arrangedObjects.length]))        
           return
         end
-        fileList = Array.new
+        fileList = []
         db = FMDatabase.databaseWithPath(@dbListAry.arrangedObjects[@dbListAry.selectionIndex]['path'])
         db.open
           results = db.executeQuery("SELECT DISTINCT path,encoding,file_id FROM conc_data")
@@ -1416,7 +1416,7 @@ file_id integer
       end
     end
     if Defaults['sectionTagHandlingCheck']
-      sectionTagsAry = Array.new
+      sectionTagsAry = []
       Defaults['sectionTagsAry'].each do |item|
         next if not item['check']
         sectionTagsAry << item['tag']
@@ -1426,7 +1426,7 @@ file_id integer
       #sectionTags = Regexp.new("<(#{sectionTagsAry.join("|")})>.+?<\/#{sectionTagsAry.join("|")}>",Regexp::IGNORECASE|Regexp::MULTILINE)
     end
     if Defaults['ignoreStringsCheck']
-      stringsToIgnore = Array.new
+      stringsToIgnore = []
       Defaults['ignoreStringsAry'].each do |item|
         next if not item['check']
         if item['case'] && item['ml']

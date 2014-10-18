@@ -51,7 +51,7 @@ class LemmaKYGSPVarListController < NSWindowController
     @groupType = ['lemma','kwg','spv']
     @groupUDName = ['lemmaGroupChoice','kwgGroupChoice','spVarGroupChoice']
     self.changeTabView(nil)
-    @keywordHashes = [[Hash.new,Hash.new],[Hash.new,Hash.new],[Hash.new,Hash.new]]
+    @keywordHashes = [[{},{}],[{},{}],[{},{}]]
     @appInfoObjCtl.content['encoding'] = 0
     @appInfoObjCtl.content['keyDivider'] = 0
     @appInfoObjCtl.content['itemDivider'] = 0
@@ -227,7 +227,7 @@ class LemmaKYGSPVarListController < NSWindowController
           end
           skipLineCharReg = @appInfoObjCtl.content['skipLineChar'].to_s
           wordList = NSString.alloc.initWithContentsOfFile(panel.filename,encoding:TextEncoding[@appInfoObjCtl.content['encoding']],error:nil)        
-          wordListAry = Array.new
+          wordListAry = []
           wordList.split(/(?:\r*\n)+/).each do |line|
             next if line.strip == "" || line[0] == skipLineCharReg
             items = line.split(keyDivider)

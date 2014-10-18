@@ -65,8 +65,8 @@ class ReplaceCharController < NSWindowController
       panel.close
       if result == 1
         charList = NSString.alloc.initWithContentsOfFile(panel.filename,encoding:TextEncoding[@appInfoObjCtl.content['encoding']],error:nil)        
-        charListAry = Array.new
-        skipChars = Array.new
+        charListAry = []
+        skipChars = []
         charList.split(/(?:\r*\n)+/).each do |line|
           item = line.split("\t")
           if @replaceCharAryCtl.arrangedObjects.select{|x| x['fromChar'] == item[0]}.length > 0
@@ -104,7 +104,7 @@ class ReplaceCharController < NSWindowController
     panel.beginSheetModalForWindow(self.window,completionHandler:Proc.new { |result|
       panel.close
       if returnCode == 1
-        exportTextAry = Array.new
+        exportTextAry = []
         charAry = @replaceCharAryCtl.arrangedObjects
         charAry.map{|x| "#{x['fromChar']}\t#{x['toChar']}"}.join("\n").writeToFile(panel.filename, atomically: true, encoding: TextEncoding[@appInfoObjCtl.content['encoding']], error: nil)
       end

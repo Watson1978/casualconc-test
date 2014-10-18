@@ -51,11 +51,11 @@ class AppDelegate
 
     @progressBar.setDisplayedWhenStopped(false)
     @progressBar.setUsesThreadedAnimation(true)
-    @openedEditorDoc = Array.new
-    @openedPDFDoc = Array.new
-    @concWindows = Array.new
-    @concPlots = Array.new
-    @wcWindows = Array.new
+    @openedEditorDoc = []
+    @openedPDFDoc = []
+    @concWindows = []
+    @concPlots = []
+    @wcWindows = []
     @currentResultMode = ["Simple/File", "Simple/Text", "Advanced/File", "Advanced/Database"]
     @currentResultScope = ["File","Paragraph","Sentence"]
     @modeSwitch.setSegmentCount(2)
@@ -77,7 +77,7 @@ class AppDelegate
     @appInfoObjCtl.content['databaseEditorEnable'] = Defaults['scopeOfContextChoice'] != 2 ? 1 : 0
     @appInfoObjCtl.content['databaseEditorHide'] = 1
     @appInfoObjCtl.content['concOpenChoice'] = 0
-    @appInfoObjCtl.content['concInfoSecLength'] = Hash.new
+    @appInfoObjCtl.content['concInfoSecLength'] = {}
     @appInfoObjCtl.content['concSortChoice'] = false
     
     @appInfoObjCtl.content['encoding'] = 0
@@ -110,7 +110,7 @@ class AppDelegate
     
     
     2.times do |i|
-      newSelection = Array.new
+      newSelection = []
       [@fileController.corpusListAry,@fileController.dbListAry][i].arrangedObjects.each do |item|
         newSelection << {'name' => item['name'], 'path' => item['path']} if item['check'] == true
       end
@@ -513,7 +513,7 @@ class AppDelegate
 
   def concExportProcess(exportFilename)
     @progressBar.startAnimation(nil)
-    outText = Array.new
+    outText = []
     outText << "Concordance Output: #{NSDate.date.description.sub(/ [+-]\d+$/,"")}"
     searchWordInfo = ""
     searchWordInfo += "Search Word: #{@appInfoObjCtl.content['concSearchWord'].to_s}" if !@appInfoObjCtl.content['concSearchWord'].nil?
@@ -623,7 +623,7 @@ class AppDelegate
   def wcExportProcess(exportFilename)
     @progressBar.startAnimation(nil)
 
-    outText = Array.new
+    outText = []
     tableID = @appInfoObjCtl.content['saveTableChoice']
     option = @appInfoObjCtl.content['wcExportOptions']
     wcAry = @wcController.wcAryCtl[tableID].arrangedObjects

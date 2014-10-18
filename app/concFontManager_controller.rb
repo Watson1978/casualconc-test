@@ -20,7 +20,7 @@ class ConcFontManagerController < NSWindowController
   
   def awakeFromNib
     fontManager = NSFontManager.sharedFontManager
-    fontNames = Array.new
+    fontNames = []
     fontManager.availableFontFamilies.each do |font|
       fontNames << {"fontName" => font, "localizedFontName" => font}
     end

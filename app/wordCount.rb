@@ -150,7 +150,7 @@ class WordCount
         wcResult[3] = lemmaResult[2]
       end
 
-      wcOutAry = Array.new
+      wcOutAry = []
       propFlag = 0
       listOrder = 0
       currentFreq = 0
@@ -165,7 +165,7 @@ class WordCount
           when 0
             wcResult[0].sort_by{|x,y| [-y,x]}.each_with_index do |item,idx|
               next if item[1] <= Defaults['wordMinNum']            
-              wcOut = Hash.new
+              wcOut = {}
               listOrder = idx + 1 if currentFreq != item[1]
               wcOut['word'] = item[0]
               wcOut['rank'] = listOrder
@@ -180,7 +180,7 @@ class WordCount
           when 1
             wcResult[0].sort_by{|x,y| [-y,x]}.each_with_index do |item,idx|      
               next if item[1] <= Defaults['wordMinNum']            
-              wcOut = Hash.new
+              wcOut = {}
               listOrder = idx + 1 if currentFreq != item[1]
               wcOut['word'] = item[0]
               wcOut['rank'] = listOrder
@@ -199,7 +199,7 @@ class WordCount
           case Defaults['corpusMode']
           when 0
             wcResult[0].sort_by{|x,y| [-y,x]}.each_with_index do |item,idx|      
-              wcOut = Hash.new
+              wcOut = {}
               listOrder = idx + 1 if currentFreq != item[1]
               wcOut['word'] = item[0].join(" ")
               #wcOut['word'] = item[0]
@@ -220,7 +220,7 @@ class WordCount
             end
           when 1
             wcResult[0].sort_by{|x,y| [-y,x]}.each_with_index do |item,idx|      
-              wcOut = Hash.new
+              wcOut = {}
               listOrder = idx + 1 if currentFreq != item[1]
               wcOut['word'] = item[0].join(" ")
               #wcOut['word'] = item[0]
@@ -254,7 +254,7 @@ class WordCount
           when 0
             wcResult[0].sort_by{|x,y| [-y,x]}.each_with_index do |item,idx|
               next if item[0].match(stopWReg) || item[1] <= Defaults['wordMinNum']            
-              wcOut = Hash.new
+              wcOut = {}
               listOrder = idx + 1 if currentFreq != item[1]
               wcOut['word'] = item[0]
               wcOut['rank'] = listOrder
@@ -269,7 +269,7 @@ class WordCount
           when 1
             wcResult[0].sort_by{|x,y| [-y,x]}.each_with_index do |item,idx|      
               next if item[0].match(stopWReg) || item[1] <= Defaults['wordMinNum']            
-              wcOut = Hash.new
+              wcOut = {}
               listOrder = idx + 1 if currentFreq != item[1]
               wcOut['word'] = item[0]
               wcOut['rank'] = listOrder
@@ -289,7 +289,7 @@ class WordCount
           when 0
             wcResult[0].sort_by{|x,y| [-y,x]}.each_with_index do |item,idx|      
               next if item[0].match(stopWReg)
-              wcOut = Hash.new
+              wcOut = {}
               listOrder = idx + 1 if currentFreq != item[1]
               wcOut['word'] = item[0].join(" ")
               #wcOut['word'] = item[0]
@@ -310,7 +310,7 @@ class WordCount
           when 1
             wcResult[0].sort_by{|x,y| [-y,x]}.each_with_index do |item,idx|      
               next if item[0].match(stopWReg)
-              wcOut = Hash.new
+              wcOut = {}
               listOrder = idx + 1 if currentFreq != item[1]
               wcOut['word'] = item[0].join(" ")
               #wcOut['word'] = item[0]
@@ -371,7 +371,7 @@ class WordCount
     foundCorpus = Hash.new{|foundCorpus,word| foundCorpus[word] = Hash.new}
     totalFreq = 0
     totalFiles = 0
-    @notFoundFiles = Array.new
+    @notFoundFiles = []
     case Defaults['mode']
     when 0
       case Defaults['corpusMode']
@@ -406,7 +406,7 @@ class WordCount
           NSApp.delegate.progressBar.incrementBy(1.0) if filesToProcess > 1
         end
       when 1
-        filesToProcess = Array.new
+        filesToProcess = []
         if @appInfoObjCtl.content[@wcCDSelection[0][tableID]] == 0
           NSApp.delegate.currentWCCDs[tableID] = @fileController.corpusListAry.arrangedObjects.select{|x| x['check']}.map{|x| x['name']}.join(", ")
           @fileController.corpusListAry.arrangedObjects.select{|x| x['check']}.each do |corpusItem|
@@ -467,11 +467,11 @@ class WordCount
         end
         totalFiles += 1
       when 1
-        filesToProcess = Array.new
+        filesToProcess = []
         totalFilesToProcess = 0
         if @appInfoObjCtl.content[@wcCDSelection[1][tableID]] == 0
           @fileController.dbListAry.arrangedObjects.select{|x| x['check']}.each do |corpusItem|
-            fileIDs = Array.new
+            fileIDs = []
             autorelease_pool {        
               db = FMDatabase.databaseWithPath(corpusItem['path'])
               db.open
@@ -518,7 +518,7 @@ class WordCount
             autorelease_pool {        
               db = FMDatabase.databaseWithPath(ccdb[0])
               db.open
-                textAry = Array.new
+                textAry = []
                 results = db.executeQuery("SELECT text FROM conc_data where file_id == ? order by id",fileID)
                 while results.next
                   textAry << results.resultDictionary['text'].mutableCopy
@@ -555,7 +555,7 @@ class WordCount
     foundCorpus = Hash.new{|foundCorpus,word| foundCorpus[word] = Hash.new}
     totalFreq = 0
     totalFiles = 0
-    @notFoundFiles = Array.new
+    @notFoundFiles = []
     case Defaults['mode']
     when 0
       case Defaults['corpusMode']
@@ -623,7 +623,7 @@ class WordCount
           end
         end
       when 1
-        filesToProcess = Array.new
+        filesToProcess = []
         if @appInfoObjCtl.content[@wcCDSelection[0][tableID]] == 0
           @fileController.corpusListAry.arrangedObjects.select{|x| x['check']}.each do |corpusItem|
             NSApp.delegate.currentWCCDs[tableID] = @fileController.corpusListAry.arrangedObjects.select{|x| x['check']}.map{|x| x['name']}.join(", ")
@@ -720,11 +720,11 @@ class WordCount
         end
         totalFiles += 1
       when 1
-        filesToProcess = Array.new
+        filesToProcess = []
         totalFilesToProcess = 0
         if @appInfoObjCtl.content[@wcCDSelection[1][tableID]] == 0
           @fileController.dbListAry.arrangedObjects.select{|x| x['check']}.each do |corpusItem|
-            fileIDs = Array.new
+            fileIDs = []
             db = FMDatabase.databaseWithPath(corpusItem['path'])
             db.open
               results = db.executeQuery("SELECT DISTINCT file_id, encoding FROM conc_data")
@@ -768,7 +768,7 @@ class WordCount
             autorelease_pool {        
               db = FMDatabase.databaseWithPath(ccdb[0])
               db.open
-                textAry = Array.new
+                textAry = []
                 results = db.executeQuery("SELECT text FROM conc_data where file_id == ? order by id",fileID)
                 while results.next
                   textAry << results.resultDictionary['text'].mutableCopy
@@ -803,7 +803,7 @@ class WordCount
     foundCorpus = Hash.new{|foundCorpus,word| foundCorpus[word] = Hash.new}
     totalFreq = 0
     totalFiles = 0
-    @notFoundFiles = Array.new
+    @notFoundFiles = []
     #case @appInfoObjCtl.content["wcBWNonCharCleanCheck#{sender.tag}"]
     #when false,nil
     #end
@@ -841,7 +841,7 @@ class WordCount
         NSApp.delegate.progressBar.startAnimation(nil)
       end
     elsif Defaults['mode'] == 0 && Defaults['corpusMode'] == 1
-      filesToProcess = Array.new
+      filesToProcess = []
       if @appInfoObjCtl.content[@wcCDSelection[0][tableID]] == 0
         @fileController.corpusListAry.arrangedObjects.select{|x| x['check']}.each do |corpusItem|
           NSApp.delegate.currentWCCDs[tableID] = @fileController.corpusListAry.arrangedObjects.select{|x| x['check']}.map{|x| x['name']}.join(", ")
@@ -900,11 +900,11 @@ class WordCount
       totalFiles += 1
     else
       currentFile = []
-      filesToProcess = Array.new
+      filesToProcess = []
       totalFilesToProcess = 0
       if @appInfoObjCtl.content[@wcCDSelection[1][tableID]] == 0
         @fileController.dbListAry.arrangedObjects.select{|x| x['check']}.each do |corpusItem|
-          fileIDs = Array.new
+          fileIDs = []
           db = FMDatabase.databaseWithPath(corpusItem['path'])
           db.open
             results = db.executeQuery("SELECT DISTINCT file_id, encoding FROM conc_data")
@@ -947,7 +947,7 @@ class WordCount
           autorelease_pool {        
             db = FMDatabase.databaseWithPath(ccdb[0])
             db.open
-              textAry = Array.new
+              textAry = []
               results = db.executeQuery("SELECT text FROM conc_data where file_id == ? order by id",fileID)
               while results.next
                 textAry << results.resultDictionary['text'].mutableCopy
@@ -984,7 +984,7 @@ class WordCount
     gapItems = Hash.new{|gapItems,word| gapItems[word] = Hash.new(0)}
     totalFreq = 0
     totalFiles = 0
-    @notFoundFiles = Array.new
+    @notFoundFiles = []
     case Defaults['mode']
     when 0
       case Defaults['corpusMode']
@@ -1055,7 +1055,7 @@ class WordCount
           end
         end
       when 1
-        filesToProcess = Array.new
+        filesToProcess = []
         if @appInfoObjCtl.content[@wcCDSelection[0][tableID]] == 0
           @fileController.corpusListAry.arrangedObjects.select{|x| x['check']}.each do |corpusItem|
             NSApp.delegate.currentWCCDs[tableID] = @fileController.corpusListAry.arrangedObjects.select{|x| x['check']}.map{|x| x['name']}.join(", ")
@@ -1170,11 +1170,11 @@ class WordCount
         end
         totalFiles += 1
       when 1
-        filesToProcess = Array.new
+        filesToProcess = []
         totalFilesToProcess = 0
         if @appInfoObjCtl.content[@wcCDSelection[1][tableID]] == 0
           @fileController.dbListAry.arrangedObjects.select{|x| x['check']}.each do |corpusItem|
-            fileIDs = Array.new
+            fileIDs = []
             db = FMDatabase.databaseWithPath(corpusItem['path'])
             db.open
               results = db.executeQuery("SELECT DISTINCT file_id, encoding FROM conc_data")
@@ -1218,7 +1218,7 @@ class WordCount
             autorelease_pool {        
               db = FMDatabase.databaseWithPath(ccdb[0])
               db.open
-                textAry = Array.new
+                textAry = []
                 results = db.executeQuery("SELECT text FROM conc_data where file_id == ? order by id",fileID)
                 while results.next
                   textAry << results.resultDictionary['text'].mutableCopy
