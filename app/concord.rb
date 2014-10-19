@@ -225,9 +225,7 @@ class Concord
           autorelease_pool {        
             inText = @fileController.readFileContents(item['path'],item['encoding'],"concord",tagProcessItems,searchWord)
             concProcessed = self.fileConcProcess(item,inText,searchWord,contextWord,excludeWord,contextReg,leftSpan,rightSpan,lpartWordReg,rpartWordReg,pwrFlag,contextIncludeSpan,contextExcludeSpan)
-            concProcessed.each do |item|
-              concResults << item
-            end
+            concResults.concat(concProcessed)
             foundFileCount[item['path']] = 1 if concProcessed.length > 0
           }
           NSApp.delegate.progressBar.incrementBy(1.0) if @fileController.currentFileListAry.arrangedObjects.length > 1
@@ -238,9 +236,7 @@ class Concord
             inText = @fileController.readFileContents(item['path'],item['encoding'],"concord",tagProcessItems,searchWord)
             #inText.gsub!(sentDivReg,'\1' + "\n") if Defaults['scopeOfContextChoice'] == 2
             concProcessed = self.fileConcProcess(item,inText,searchWord,contextWord,excludeWord,contextReg,leftSpan,rightSpan,lpartWordReg,rpartWordReg,pwrFlag,contextIncludeSpan,contextExcludeSpan)
-            concProcessed.each do |item|
-              concResults << item
-            end
+            concResults.concat(concProcessed)
             foundFileCount[item['path']] = 1 if concProcessed.length > 0
           }
           NSApp.delegate.progressBar.incrementBy(1.0) if @fileController.currentFileListAry.arrangedObjects.length > 1
@@ -302,9 +298,7 @@ class Concord
             autorelease_pool {        
               inText = @fileController.readFileContents(item['path'],item['encoding'],"concord",tagProcessItems,searchWord)
               concProcessed = self.fileConcProcess(item,inText,searchWord,contextWord,excludeWord,contextReg,leftSpan,rightSpan,lpartWordReg,rpartWordReg,pwrFlag,contextIncludeSpan,contextExcludeSpan)
-              concProcessed.each do |item|
-                concResults << item
-              end
+              concResults.concat(concProcessed)
               foundFileCount[item['path']] = 1 if concProcessed.length > 0
             }
             NSApp.delegate.progressBar.incrementBy(1.0) if totalFilesToProcess > 1
@@ -323,9 +317,7 @@ class Concord
               inText = @fileController.readFileContents(item['path'],item['encoding'],"concord",tagProcessItems,searchWord)
               #inText.gsub!(sentDivReg,'\1' + "\n") if Defaults['scopeOfContextChoice'] == 2
               concProcessed = self.fileConcProcess(item,inText,searchWord,contextWord,excludeWord,contextReg,leftSpan,rightSpan,lpartWordReg,rpartWordReg,pwrFlag,contextIncludeSpan,contextExcludeSpan)
-              concProcessed.each do |item|
-                concResults << item
-              end
+              concResults.concat(concProcessed)
               foundFileCount[item['path']] = 1 if concProcessed.length > 0
             }
             NSApp.delegate.progressBar.incrementBy(1.0) if totalFilesToProcess > 1
@@ -346,9 +338,8 @@ class Concord
       #inText.gsub!(sentDivReg,'\1' + "\n") if Defaults['scopeOfContextChoice'] == 2
       
       return [] if inText.length == 0
-      self.fileConcProcess({'path' => "current","filename" => "textView",'encoding' => 0},inText,searchWord,contextWord,excludeWord,contextReg,leftSpan,rightSpan,lpartWordReg,rpartWordReg,pwrFlag,contextIncludeSpan,contextExcludeSpan).each do |item|
-        concResults << item
-      end  
+      concProcessed = self.fileConcProcess({'path' => "current","filename" => "textView",'encoding' => 0},inText,searchWord,contextWord,excludeWord,contextReg,leftSpan,rightSpan,lpartWordReg,rpartWordReg,pwrFlag,contextIncludeSpan,contextExcludeSpan).each
+      concResults.concat(concProcessed)
     elsif Defaults['mode'] == 1 && Defaults['corpusMode'] == 1
       NSApp.delegate.currentConcMode = 3
       #NSApp.delegate.progressBar.setIndeterminate(true)
@@ -411,9 +402,7 @@ class Concord
                   results2.close
                   inText = textAry.join("\n\n")
                   concProcessed = self.fileConcProcess({'dbPath' => item[0], 'filename' => eachFname, 'corpus' => item[1], 'path' => eachPath, 'encoding' => encoding.to_i , 'fileID' => fileID},inText,searchWord,contextWord,excludeWord,contextReg,leftSpan,rightSpan,lpartWordReg,rpartWordReg,pwrFlag,contextIncludeSpan,contextExcludeSpan)
-                  concProcessed.each do |item|
-                    concResults << item
-                  end
+                  concResults.concat(concProcessed)
                   foundFileCount[[eachFname,eachPath]] = 1 if concProcessed.length > 0
                   fileCount += 1
                 end
@@ -432,9 +421,7 @@ class Concord
               while results.next
                 entryItem = results.resultDictionary
                 concProcessed = self.fileConcProcess({'dbPath' => item[0], 'filename' => entryItem['file_name'], 'corpus' => item[1], 'path' => entryItem['path'], 'encoding' => entryItem['encoding'].to_i, 'entryID' => entryItem['id'], 'fileID' => entryItem['file_id']},entryItem['text'],searchWord,contextWord,excludeWord,contextReg,leftSpan,rightSpan,lpartWordReg,rpartWordReg,pwrFlag,contextIncludeSpan,contextExcludeSpan)
-                concProcessed.each do |item|
-                  concResults << item
-                end
+                concResults.concat(concProcessed)
                 foundFileCount[[entryItem['file_name'],item[0]]] = 1 if concProcessed.length > 0
               end 
               results.close
